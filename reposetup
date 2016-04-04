@@ -1,0 +1,184 @@
+#!/bin/sh
+set -e
+
+PROGNAME=$(basename $0)
+
+POSSIBLE_CONFIG_PATH="/etc/${PROGNAME}rc $HOME/.config/${PROGNAME}rc"
+
+die() {
+    echo "$PROGNAME: $*" >&2
+    exit 1
+}
+
+usage() {
+    if [ "$*" != "" ] ; then
+        echo "Error: $*"
+    fi
+
+    cat << EOF
+Usage: $PROGNAME [OPTION ...] <ACTION> [ACTION ARGUMENTS...]
+Minimalist manager for Git repositories on a remote server.
+
+Options:
+  -h, --help          display this usage message and exit
+
+Actions:
+    create <REPO_NAME>
+
+    rename <FROM> <TO>
+
+    delete <REPO_NAME>
+
+    ls
+EOF
+
+    exit 1
+}
+
+die_missing_config() {
+    cat >&2 << EOF
+You must create a configuration file.
+
+Example configuration:
+
+# Mandatory: path where repositories will be created
+REPO_BASE_DIR=\$HOME/public_html/git
+
+# Repository url for read-write access
+REPO_RW_URL=ssh://\$(hostname --fqdn)/public_html/git/\$REPO_NAME
+
+# Optional: Repositiory url for read-only access
+REPO_RO_URL=http://\$(hostname --fqdn)/~\$USER/git/\$REPO_NAME
+
+The following paths are checked for configuration files:
+EOF
+    for path in $POSSIBLE_CONFIG_PATH ; do
+        echo "- $path" >&2
+    done
+    exit 1
+}
+
+load_config() {
+    local path
+    for path in $POSSIBLE_CONFIG_PATH ; do
+        [ -f $path ] && . $path
+    done
+
+    if [ -z "$REPO_BASE_DIR" ] ; then
+        die_missing_config
+    fi
+}
+
+check_repo_name() {
+    local name="$1"
+    if ! echo "$name" | egrep '^[-a-zA-Z0-9_.]+$' > /dev/null ; then
+        die "'$name' contains invalid characters for a repository name"
+    fi
+    case "$name" in
+    .*)
+        die "Repository name must not start with '.'"
+        ;;
+    *)
+        ;;
+    esac
+}
+
+action_create() {
+    local REPO_NAME="$1"
+    if [ -z "$REPO_NAME" ] ; then
+        usage "Missing REPO_NAME argument"
+    fi
+    check_repo_name $REPO_NAME
+
+    # Reload config to evaluate url options again with ${REPO_NAME} set
+    load_config
+
+    if [ -d $REPO_BASE_DIR/$REPO_NAME ] ; then
+        die "There is already a repository named $REPO_NAME"
+    fi
+
+    mkdir -p $REPO_BASE_DIR/$REPO_NAME
+    cd $REPO_BASE_DIR/$REPO_NAME
+    git init --bare
+    mv hooks/post-update.sample hooks/post-update
+    touch git-daemon-export-ok
+
+    cat <<EOF
+Repository $REPO_NAME has been created. You can now push your repository to it:
+
+    git remote add origin $REPO_RW_URL
+    git push -u origin master
+EOF
+
+    if [ -n "$REPO_RO_URL" ] ; then
+        cat <<EOF
+
+Url for read-only access:
+
+    $REPO_RO_URL
+EOF
+    fi
+}
+
+action_rename() {
+    echo d
+    local FROM="$1"
+    local TO="$2"
+    if [ -z "$FROM" ] ; then
+        usage "Missing FROM argument"
+    fi
+    if [ -z "$TO" ] ; then
+        usage "Missing TO argument"
+    fi
+    check_repo_name $FROM
+    check_repo_name $TO
+    if [ -d "$REPO_BASE_DIR/$TO" ] ; then
+        die "There is already a repository named $TO"
+    fi
+    mv $REPO_BASE_DIR/$FROM $REPO_BASE_DIR/$TO
+}
+
+action_delete() {
+    local REPO_NAME="$1"
+    if [ -z "$REPO_NAME" ] ; then
+        usage "Missing REPO_NAME argument"
+    fi
+    check_repo_name $REPO_NAME
+
+    local path=$REPO_BASE_DIR/$REPO_NAME
+    if [ ! -d "$path" ] ; then
+        die "There is no repository named $REPO_NAME"
+    fi
+    rm -rf "$path"
+}
+
+action_ls() {
+    ls $REPO_BASE_DIR
+}
+
+load_config
+
+while [ $# -gt 0 ] ; do
+    case "$1" in
+    -h|--help)
+        usage
+        ;;
+    -*)
+        usage "Unknown option '$1'"
+        ;;
+    create|rename|delete|ls)
+        action=$1
+        shift
+        action_$action $*
+        exit 0
+        ;;
+    *)
+        usage "Invalid action"
+        ;;
+    esac
+    shift
+done
+
+usage "Not enough arguments"
+
+# vim:set ts=4 sw=4 et:
