@@ -121,7 +121,6 @@ EOF
 }
 
 action_rename() {
-    echo d
     local FROM="$1"
     local TO="$2"
     if [ -z "$FROM" ] ; then
