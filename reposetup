@@ -45,7 +45,7 @@ Example configuration:
 REPO_BASE_DIR=\$HOME/public_html/git
 
 # Repository url for read-write access
-REPO_RW_URL=ssh://\$(hostname --fqdn)/public_html/git/\$REPO_NAME
+REPO_RW_URL=\$(hostname --fqdn):public_html/git/\$REPO_NAME
 
 # Optional: Repositiory url for read-only access
 REPO_RO_URL=http://\$(hostname --fqdn)/~\$USER/git/\$REPO_NAME
