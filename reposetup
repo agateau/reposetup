@@ -27,7 +27,7 @@ Actions:
 
     rename <FROM> <TO>
 
-    delete <REPO_NAME>
+    rm <REPO_NAME>
 
     ls
 EOF
@@ -137,7 +137,7 @@ action_rename() {
     mv $REPO_BASE_DIR/$FROM $REPO_BASE_DIR/$TO
 }
 
-action_delete() {
+action_rm() {
     local REPO_NAME="$1"
     if [ -z "$REPO_NAME" ] ; then
         usage "Missing REPO_NAME argument"
@@ -165,7 +165,7 @@ while [ $# -gt 0 ] ; do
     -*)
         usage "Unknown option '$1'"
         ;;
-    create|rename|delete|ls)
+    create|rename|rm|ls)
         action=$1
         shift
         action_$action $*
