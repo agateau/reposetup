@@ -101,7 +101,7 @@ action_create() {
 
     mkdir -p $REPO_BASE_DIR/$REPO_NAME
     cd $REPO_BASE_DIR/$REPO_NAME
-    git init --bare
+    git init --bare --quiet
     mv hooks/post-update.sample hooks/post-update
     touch git-daemon-export-ok
 
