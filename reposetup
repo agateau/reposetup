@@ -5,6 +5,8 @@ PROGNAME=$(basename $0)
 
 POSSIBLE_CONFIG_PATH="/etc/${PROGNAME}rc $HOME/.config/${PROGNAME}rc"
 
+VALID_REPONAME_REGEX='^[-a-zA-Z0-9_.]+$'
+
 die() {
     echo "$PROGNAME: $*" >&2
     exit 1
@@ -71,7 +73,7 @@ load_config() {
 
 check_repo_name() {
     local name="$1"
-    if ! echo "$name" | egrep '^[-a-zA-Z0-9_.]+$' > /dev/null ; then
+    if ! echo "$name" | egrep "$VALID_REPONAME_REGEX" > /dev/null ; then
         die "'$name' contains invalid characters for a repository name"
     fi
     case "$name" in
