@@ -148,7 +148,15 @@ action_rm() {
     if [ ! -d "$path" ] ; then
         die "There is no repository named \"$REPO_NAME\""
     fi
-    rm -rf "$path"
+    echo -n "Delete the \"$REPO_NAME\" repository? "
+    read answer
+    case "$answer" in
+    y|Y)
+        rm -rf "$path"
+        ;;
+    *)
+        ;;
+    esac
 }
 
 action_ls() {
