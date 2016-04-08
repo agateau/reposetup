@@ -44,10 +44,10 @@ Example configuration:
 # Mandatory: path where repositories will be created
 REPO_BASE_DIR=\$HOME/public_html/git
 
-# Repository url for read-write access
+# Mandatory: repository url for read-write access
 REPO_RW_URL=\$(hostname --fqdn):public_html/git/\$REPO_NAME
 
-# Optional: Repositiory url for read-only access
+# Optional: repositiory url for read-only access
 REPO_RO_URL=http://\$(hostname --fqdn)/~\$USER/git/\$REPO_NAME
 
 The following paths are checked for configuration files:
