@@ -94,7 +94,7 @@ action_create() {
     load_config
 
     if [ -d $REPO_BASE_DIR/$REPO_NAME ] ; then
-        die "There is already a repository named $REPO_NAME"
+        die "There is already a repository named \"$REPO_NAME\""
     fi
 
     mkdir -p $REPO_BASE_DIR/$REPO_NAME
@@ -104,7 +104,7 @@ action_create() {
     touch git-daemon-export-ok
 
     cat <<EOF
-Repository $REPO_NAME has been created. You can now push your repository to it:
+The "$REPO_NAME" repository has been created. You can now push your repository to it:
 
     git remote add origin $REPO_RW_URL
     git push -u origin master
@@ -132,7 +132,7 @@ action_rename() {
     check_repo_name $FROM
     check_repo_name $TO
     if [ -d "$REPO_BASE_DIR/$TO" ] ; then
-        die "There is already a repository named $TO"
+        die "There is already a repository named \"$TO\""
     fi
     mv $REPO_BASE_DIR/$FROM $REPO_BASE_DIR/$TO
 }
@@ -146,7 +146,7 @@ action_delete() {
 
     local path=$REPO_BASE_DIR/$REPO_NAME
     if [ ! -d "$path" ] ; then
-        die "There is no repository named $REPO_NAME"
+        die "There is no repository named \"$REPO_NAME\""
     fi
     rm -rf "$path"
 }
