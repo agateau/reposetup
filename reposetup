@@ -162,7 +162,20 @@ action_rm() {
 }
 
 action_ls() {
-    ls $REPO_BASE_DIR
+    for dir in $REPO_BASE_DIR/* ; do
+        if [ ! -d $dir/refs ] ; then
+            # Does not look like a git repository
+            continue
+        fi
+        REPO_NAME="$(basename $dir)"
+        load_config
+
+        echo "repository: $REPO_NAME"
+        echo "  read/write url: $REPO_RW_URL"
+        if [ -n "$REPO_RO_URL" ] ; then
+            echo "  read-only url: $REPO_RO_URL"
+        fi
+    done
 }
 
 load_config
