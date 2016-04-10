@@ -106,7 +106,11 @@ action_create() {
     touch git-daemon-export-ok
 
     cat <<EOF
-The "$REPO_NAME" repository has been created. You can now push your repository to it:
+The "$REPO_NAME" repository has been created. You can clone it with:
+
+    git clone $REPO_RW_URL
+
+If you already have a local repository, you can push its content with:
 
     git remote add origin $REPO_RW_URL
     git push -u origin master
@@ -115,7 +119,7 @@ EOF
     if [ -n "$REPO_RO_URL" ] ; then
         cat <<EOF
 
-Url for read-only access:
+The url for read-only access is:
 
     $REPO_RO_URL
 EOF
