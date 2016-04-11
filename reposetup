@@ -174,10 +174,10 @@ action_ls() {
         REPO_NAME="$(basename $dir)"
         load_config
 
-        echo "repository: $REPO_NAME"
-        echo "  read/write url: $REPO_RW_URL"
+        echo "$REPO_NAME:"
+        echo "    read-write url: $REPO_RW_URL"
         if [ -n "$REPO_RO_URL" ] ; then
-            echo "  read-only url: $REPO_RO_URL"
+            echo "    read-only url: $REPO_RO_URL"
         fi
     done
 }
