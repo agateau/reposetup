@@ -1,6 +1,12 @@
 #!/bin/sh
 set -e
 
+# Reposetup, a minimalist Git repository manager
+# https://github.com/agateau/reposetup
+#
+# Author: Aurélien Gâteau
+# License: BSD
+
 PROGNAME=$(basename $0)
 
 POSSIBLE_CONFIG_PATH="/etc/${PROGNAME}rc $HOME/.config/${PROGNAME}rc"
