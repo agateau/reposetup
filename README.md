@@ -1,4 +1,4 @@
-# reposetup
+# Reposetup
 
 Reposetup is a minimalist tool to manage repositories on a remote server. It
 requires only an ssh server and optionally a web server.
@@ -8,9 +8,10 @@ you want to host repositories on your own server.
 
 ## Installation
 
-Assuming you have a server with SSH installed and Apache with the [mod_userdir][]
-module enabled, the following will setup Reposetup to manage Git repositories in
-the `public_html/git` dir inside your user home dirs.
+Assuming you have a server with SSH installed and Apache with the
+[mod_userdir][] module enabled, the following will setup Reposetup to manage
+Git repositories in the `public_html/git` directory inside your user home
+directories.
 
 - Connect to your server
 
@@ -33,8 +34,8 @@ the `public_html/git` dir inside your user home dirs.
     REPO_RO_URL=http://<yourserver>/~$USER/git/$REPO_NAME
     ```
 
-Note: You can also create a `reposetuprc` file in the `$HOME/.config` dir of
-each user.
+Note: You can also create a `reposetuprc` file in the `$HOME/.config` directory
+of each user.
 
 ## Usage
 
@@ -44,19 +45,25 @@ Let's say user sheldon wants to create a repository named example on the
 bazinga server:
 
     $ ssh sheldon@bazinga reposetup create example
-    The "example" repository has been created. You can now push your repository to it:
+    The "example" repository has been created. You can now clone it with:
+
+        git clone sheldon@bazinga:public_html/git/example
+
+    If you already have a local repository, you can push its content with:
 
         git remote add origin sheldon@bazinga:public_html/git/example
         git push -u origin master
 
-    Url for read-only access:
+    The url for read-only access is:
 
         http://bazinga/~sheldon/git/example
 
 To list your repositories:
 
     $ ssh sheldon@bazinga reposetup ls
-    example
+    example:
+        read-write url: sheldon@bazinga:public_html/git/example
+        read-only url: http://bazinga/~sheldon/git/example
 
 To rename the repository:
 
@@ -65,6 +72,7 @@ To rename the repository:
 To delete the repository:
 
     $ ssh sheldon@bazinga repository rm bbt
+    Delete the "bbt" repository? y
 
 ## Shouldn't you host this on your own server?
 
